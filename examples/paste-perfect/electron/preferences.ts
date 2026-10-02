@@ -82,8 +82,11 @@ export class PreferenceStore {
         throw new Error('The recipe no longer exists.');
       }
       if (input.id === undefined && current.recipes.length >= 100) throw new Error('You can save up to 100 custom recipes.');
-      const recipes = current.recipes.filter((recipe) => recipe.id !== id);
-      recipes.push({ id, name, instruction, builtin: false });
+      const index = current.recipes.findIndex((recipe) => recipe.id === id);
+      const recipe: Recipe = { id, name, instruction, builtin: false };
+      const recipes = index === -1
+        ? [...current.recipes, recipe]
+        : current.recipes.map((entry, i) => (i === index ? recipe : entry));
       return { ...current, recipes };
     });
   }
